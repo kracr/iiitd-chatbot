@@ -1,0 +1,98 @@
+.chatbot {
+  display: flex;
+  flex-direction: column;
+  height: 93vh;
+  align-items: center;
+  background-color: rgb(150, 160, 170);
+}
+
+.chatScreen {
+  height: 100%;
+  width: min(70vh, 100%);
+}
+
+.topBar {
+  background-color: rgb(50, 50, 50);
+  height: 10vh;
+  color: white;
+  font-size: 4vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+.topBarText {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.window {
+  position: relative;
+  height: 83vh;
+  width: 100%;
+  background-color: rgb(248, 248, 248);
+  border-width: 0.5vh;
+}
+
+.chat {
+  bottom: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  /* max-height: 100vh; */
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+.messageBox {
+  height: 10%;
+}
+
+.messageInputBox {
+  width: 85%;
+  height: 70%;
+}
+
+.messageCard {
+  width: 80%;
+  font-size: 2.5vh;
+  border-radius: 2vh;
+  padding: 2vh;
+}
+.messageCard.bot {
+  color: rgb(50, 50, 50);
+  background-color: rgb(210, 220, 230);
+  position: relative;
+  float: left;
+}
+.messageCard.user {
+  color: white;
+  background-color: rgb(50, 50, 50);
+  position: relative;
+  float: right;
+}
+
+.answerSource {
+  display: block;
+  font-size: 2vh;
+  float: right;
+}
+
+.outer {
+  display: grid;
+  grid-template: 1fr / 1fr;
+  place-items: center;
+}
+.outer > * {
+  grid-column: 1 / 1;
+  grid-row: 1 / 1;
+}
+.outer .below {
+  z-index: 2;
+}
+.outer .top {
+  z-index: 1;
+}

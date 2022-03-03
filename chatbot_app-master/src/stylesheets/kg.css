@@ -1,0 +1,7 @@
+.kg {
+  display: grid;
+  height: 80vh;
+  width: 80vw;
+  position: relative;
+  overflow: scroll;
+}

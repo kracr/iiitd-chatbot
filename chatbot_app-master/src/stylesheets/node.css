@@ -1,0 +1,93 @@
+.nodeBody {
+  height: 10vh;
+  width: 7vw;
+  position: absolute;
+}
+
+.mainBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 7vw;
+}
+
+.options {
+  display: block;
+  height: 1.5vh;
+  /* background-color: rgb(203, 203, 203); */
+}
+
+.Document {
+  padding: 1vh;
+  background-color: rgb(91, 91, 91);
+  color: white;
+  height: 8vh;
+  width: 5vw;
+  font-size: 1.5vh;
+  border-radius: 0.5vh;
+  text-align: center;
+}
+
+.Topic {
+  padding: 1vh;
+  background-color: rgb(185, 138, 227);
+  /* color: white; */
+  height: 8vh;
+  width: 5vw;
+  font-size: 1.5vh;
+  border-radius: 0.5vh;
+  text-align: center;
+}
+
+.Paragraph {
+  padding: 1vh;
+  background-color: peachpuff;
+  height: 8vh;
+  width: 5vw;
+  font-size: 1.5vh;
+  border-radius: 0.5vh;
+  text-align: center;
+}
+
+.Sentence {
+  padding: 1vh;
+  background-color: rgb(175, 217, 244);
+  height: 8vh;
+  width: 5vw;
+  font-size: 1.5vh;
+  border-radius: 0.5vh;
+  text-align: center;
+}
+
+.ExtEntity {
+  padding: 1vh;
+  background-color: coral;
+  height: 8vh;
+  width: 5vw;
+  font-size: 1.5vh;
+  border-radius: 0.5vh;
+  text-align: center;
+}
+
+.nodeText {
+  margin-top: 0.5vh;
+  font-size: 1.3vh;
+}
+
+.addNeighboursIcon {
+  height: 3vh;
+  width: auto;
+  position: absolute;
+  /* color: rgb(94, 211, 94); */
+  z-index: 1;
+}
+
+.removeNodeIcon {
+  height: 2vh;
+  width: auto;
+  position: absolute;
+  left: 5.5vw;
+  /* color: rgb(254, 120, 120); */
+  margin-top: 0.5vh;
+  z-index: 1;
+}
