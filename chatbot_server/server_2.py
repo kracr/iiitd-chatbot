@@ -8,11 +8,11 @@ import os
 
 
 load_dotenv()
-# NEO4J_USERNAME = os.getenv('neo4j')
-# NEO4J_PASSWORD = os.getenv('kracr')
+# NEO4J_USERNAME = os.getenv('NEO4J_USERNAME')
+# NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD')
 
-NEO4J_USERNAME = "himanshu"
-NEO4J_PASSWORD = "himanshu"
+NEO4J_USERNAME = "pankil"
+NEO4J_PASSWORD = "suzy"
 
 qa_model.init()
 qa_helper.init_kg(NEO4J_USERNAME, NEO4J_PASSWORD)

@@ -11,7 +11,7 @@ from helper import *
 
 from neo4j import GraphDatabase
 driver = None
-
+session = None
 mrc = None
 
 
@@ -30,6 +30,8 @@ def init_kg(username, password):
     print('loading kg')
     global driver
     driver = GraphDatabase.driver('neo4j://localhost:7687', auth=(username, password))
+    global session 
+    session = driver.session()
     print('finished')
 
 def init_bert():
@@ -66,8 +68,8 @@ def spellcheck(text):
 def shortlist_sentences(query, num_sentences = 10):
     num_sentences = 10
     global driver
-    with driver.session() as session:
-        sentences = session.read_transaction(q_shortlist_sentences, query, num_sentences)
+    global session
+    sentences = session.read_transaction(q_shortlist_sentences, query, num_sentences)
 
     return sentences
 
@@ -242,8 +244,11 @@ def q_shortlist_sentences(tx, query, top_k):
         ') as answer_type \n' +
         'return s_id, sentence, topic, topics, sent_stemmed_overlap, sent_text, sent_tokens, nbr_text, nbr_tokens, topic1, topic2, answer_type'
     )
+    # print("QUERY")
+    # print(query)
     print("yo5")
-    result = [i for i in tx.run(query)]
+    query_result = tx.run(query)
+    result = [i for i in query_result]
     sentences = []
     answers = []
     print("yo6")
@@ -277,9 +282,9 @@ def get_topics_of_sentences(sentences):
 
 def get_sentence_details(sentence):
     global driver
-    with driver.session() as session:
-        sentences = session.read_transaction(q_get_neighbouring_sentences, sentence['s_id'])
-        document = session.read_transaction(q_get_document_of_sentence, sentence['s_id'])
+    global session
+    sentences = session.read_transaction(q_get_neighbouring_sentences, sentence['s_id'])
+    document = session.read_transaction(q_get_document_of_sentence, sentence['s_id'])
     return sentences, document
 
 def q_get_neighbouring_sentences(tx, sid):
@@ -301,8 +306,9 @@ def q_get_document_of_sentence(tx, sid):
 
 def get_closest_entities(query, threshold = 0):
     global driver
-    with driver.session() as session:
-        entities = session.read_transaction(q_get_closest_entities, query, threshold)
+    global session
+
+    entities = session.read_transaction(q_get_closest_entities, query, threshold)
     return entities
 
 def q_get_closest_entities(tx, query, threshold):
@@ -338,8 +344,8 @@ def q_get_closest_entities(tx, query, threshold):
 
 def get_graph_with_neighbours(nodes, nbr_of_nodes):
     global driver
-    with driver.session() as session:
-        graph = session.read_transaction(q_get_graph_with_neighbours, nodes, nbr_of_nodes)
+    global session
+    graph = session.read_transaction(q_get_graph_with_neighbours, nodes, nbr_of_nodes)
     return graph
 
 def q_get_graph_with_neighbours(tx, nodes, nbr_of_nodes):
@@ -351,8 +357,8 @@ def q_get_graph_with_neighbours(tx, nodes, nbr_of_nodes):
 
 def get_documents():
     global driver
-    with driver.session() as session:
-        documents = session.read_transaction(q_get_documents)
+    global session
+    documents = session.read_transaction(q_get_documents)
     return documents
 
 def q_get_documents(tx):
