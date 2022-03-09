@@ -1,6 +1,0 @@
-.env
-help/
-data/
-__pycache__
-.python-version
-neuralcoref/

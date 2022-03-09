@@ -133,10 +133,14 @@ def convert_to_sentence(record):
     return sentence
 
 def q_shortlist_sentences(tx, query, top_k):
+    print("yo1")
     global question_types
     keywords = [list(keyword) for keyword in find_keywords(query)]
+    print("yo2")
     question_types = get_question_type(query)
+    print("yo3")
     stemmed_tokens = get_stemmed_sentence_tokens(query)
+    print("yo4")
     keywords.append(['##NO_MATCH##', question_types, []])
     weights = [1.21331255, 4.73858929, 0.79974172, 2.0962204, 0.79974172, 1.13216203, 0.44272739, 0. ]
     query = (
@@ -238,24 +242,27 @@ def q_shortlist_sentences(tx, query, top_k):
         ') as answer_type \n' +
         'return s_id, sentence, topic, topics, sent_stemmed_overlap, sent_text, sent_tokens, nbr_text, nbr_tokens, topic1, topic2, answer_type'
     )
-    print(query)
+    print("yo5")
     result = [i for i in tx.run(query)]
     sentences = []
     answers = []
+    print("yo6")
     sentences = list(map(convert_to_sentence, result))
     for sentence in tqdm(sentences):
         answers.append([sentence['sent_stemmed_overlap'], sentence['sent_text'],  sentence['sent_tokens'], sentence['nbr_text'], sentence['nbr_tokens'], sentence['topic1'], sentence['topic2'], sentence['answer_type']])
+    print("yo7")
     answers = np.array(answers)
     mean = answers.mean(axis = 0).reshape((1, 8))
     std = answers.std(axis = 0)
     if 0 not in std:
         answers = (answers - mean)/std
-
+    print("yo8")
     final_sentences = []
     for i in tqdm(range(len(sentences))):
         sentences[i]['score'] = sum(answers[i][j] * weights[j] for j in range(len(answers[i])))
         if sentences[i]['score'] >= 1:
             final_sentences.append(sentences[i])
+    print("yo9")
     final_sentences.sort(key=lambda sentence: sentence['score'], reverse = True)
     return final_sentences[:top_k]
 
