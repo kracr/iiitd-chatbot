@@ -51,6 +51,13 @@ def init_mrc():
     import allennlp_models.rc
     mrc = Predictor.from_path("/Users/osheensachdev/btp/iiitd_policy_chatbot/bidaf-elmo-model-2020.03.19.tar.gz")
     print('finished')
+
+def removeTrailingCharacter(text):
+    word_list = nltk.word_tokenize(text)
+    if len(word_list[-1]) == 1 and ( not (word_list[-1]>='a' and word_list[-1]<='z')) and ( not (word_list[-1]>='A' and word_list[-1]<='Z')) and ( not (word_list[-1]>='0' and word_list[-1]<='9')):
+        del word_list[-1]
+    print("before:", text, "after:", " ".join(word_list))
+    return " ".join(word_list)
     
 def spellcheck(text):
     query_arr = nltk.word_tokenize(text) # tokenize the text

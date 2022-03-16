@@ -108,6 +108,7 @@ class Chatbot extends Component {
     this.data.state = "correctedText";
     this.data.query = message.text;
 
+
     const requestOptions = {
       method: "POST",
       body: JSON.stringify({ text: this.data.query }),
@@ -122,7 +123,9 @@ class Chatbot extends Component {
     this.setState({ loading: false });
     console.log(this.data.correctedText);
 
-    if (this.data.correctedText == this.data.query) {
+    console.log(this.data.query);
+
+    if (data.text == this.data.correctedText) {
       this.handleMessageAfterCorrectedText("No");
     } else {
       this.setState({
@@ -155,6 +158,7 @@ class Chatbot extends Component {
     );
     let data = await response.json();
     this.data.sentences = data.sentences;
+    console.log(data);
     this.setState({ loading: false });
     this.sendAnswer(this.data.sentences);
   }

@@ -56,10 +56,12 @@ class MyServer(BaseHTTPRequestHandler):
 			self.send_headers()
 			self.wfile.write(json.dumps({'nodes': nodes, 'edges': edges}).encode('utf-8'))
 		elif self.path == '/correct_text':
-			corrected_text = qa_helper.spellcheck(data['text'])
+			print("data[text]:", data['text'])
+			withoutTrailingText = qa_helper.removeTrailingCharacter(data['text'])
+			corrected_text = qa_helper.spellcheck(withoutTrailingText)
 			self.send_response(200)
 			self.send_headers()
-			self.wfile.write(json.dumps({'corrected_text': corrected_text, 'text': data['text']}).encode('utf-8'))
+			self.wfile.write(json.dumps({'corrected_text': corrected_text, 'text': withoutTrailingText}).encode('utf-8'))
 		else:
 			self.handle_error('invalid request path')
 			return
