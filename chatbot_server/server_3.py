@@ -9,8 +9,11 @@ load_dotenv()
 # NEO4J_USERNAME = os.getenv('neo4j')
 # NEO4J_PASSWORD = os.getenv('kracr')
 
-NEO4J_USERNAME = "himanshu"
-NEO4J_PASSWORD = "himanshu"
+# NEO4J_USERNAME = "himanshu"
+# NEO4J_PASSWORD = "himanshu"
+
+NEO4J_USERNAME = "pankil"
+NEO4J_PASSWORD = "suzy"
 
 qa_model.init()
 qa_helper.init_kg(NEO4J_USERNAME, NEO4J_PASSWORD)
@@ -61,8 +64,10 @@ def get_graph_entities():
 def correct_text():
     data = literal_eval(request.data.decode('utf8'))
     print("data5", data)
-    corrected_text = qa_helper.spellcheck(data['text'])
-    return jsonify({'corrected_text': corrected_text, 'text': data['text']}), 200, send_headers()
+
+    withoutTrailingText = qa_helper.removeTrailingCharacter(data['text'])
+    corrected_text = qa_helper.spellcheck(withoutTrailingText)
+    return jsonify({'corrected_text': corrected_text, 'text': withoutTrailingText}), 200, send_headers()
 
 if __name__ == '__main__':
    app.run(debug = True, port=8080)
