@@ -1,6 +1,8 @@
 import {
   ArrowCircleUpIcon,
+  ChevronLeftIcon,
   ExclamationCircleIcon,
+  MapIcon,
   PlusCircleIcon,
   SearchIcon,
   XCircleIcon,
@@ -321,6 +323,90 @@ const NodeDetails: React.FC<{
   </div>
 );
 
+const Legend: React.FC = () => {
+  const types: {
+    type: NodeType;
+    description: string;
+  }[] = [
+    {
+      type: "Document",
+      description: "IIITD policy document.",
+    },
+    {
+      type: "Topic",
+      description: "Topic or subtopic present in a IIITD policy document.",
+    },
+    {
+      type: "Paragraph",
+      description: "Paragraph present in a IIITD policy document.",
+    },
+    {
+      type: "Sentence",
+      description: "Sentence in a IIITD policy document.",
+    },
+    {
+      type: "ExtEntity",
+      description: "Noun phrase in a IIITD policy document.",
+    },
+  ];
+  const icons: {
+    Icon: (props: any) => React.ReactElement;
+    description: string;
+  }[] = [
+    {
+      Icon: PlusCircleIcon,
+      description: "Add neighbours of the current node to graph.",
+    },
+    {
+      Icon: XCircleIcon,
+      description:
+        "Remove node from graph. Neighbouring nodes with no other neighbours will also be removed.",
+    },
+  ];
+  const [open, setOpen] = useState<boolean>(false);
+  return (
+    <aside className="absolute z-10 flex flex-col items-end gap-2 top-2 right-2">
+      <button
+        className="flex items-center gap-1 p-2 bg-opacity-50 border border-slate-400 backdrop-filter backdrop-blur bg-slate-100"
+        onClick={() => setOpen(!open)}
+      >
+        <MapIcon className="w-6 h-6 text-teal-700" />
+        <ChevronLeftIcon
+          className={`w-6 h-6 text-teal-700 transform transition duration-150 ease-in-out ${
+            open && "-rotate-90"
+          }`}
+        />
+      </button>
+      <ul
+        className={`${
+          !open && "hidden"
+        } max-w-md shadow-lg shadow-slate-100 backdrop-filter backdrop-blur cursor-default bg-opacity-50 border border-slate-400 bg-slate-100 space-y-2 py-2`}
+      >
+        {types.map(({ type, description }) => (
+          <li key={type} className="px-2">
+            <article className="flex items-center gap-4">
+              <div
+                className={`${nodeColor[type].bg} flex items-center justify-center p-2 rounded-md border ${nodeColor[type].border} text-sm ${nodeColor[type].text} font-bold`}
+              >
+                {type}
+              </div>
+              <p className="text-sm text-slate-500">{description}</p>
+            </article>
+          </li>
+        ))}
+        {icons.map(({ Icon, description }) => (
+          <li key={description} className="px-2">
+            <article className="flex items-center gap-4">
+              <Icon className="w-8 h-8 text-teal-700" />
+              <p className="flex-1 text-sm text-slate-500">{description}</p>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  );
+};
+
 const Explore: NextPage = () => {
   const [presentNeighboursRef, presentNeighbours] = useStateRef<Set<string>>(
     new Set()
@@ -448,19 +534,17 @@ const Explore: NextPage = () => {
       newLayers[depth.get(nodeId)! - 1].push(node);
     });
     newLayers.push(
-      ...["Paragraph", "Sentence", "ExtEntity"]
-        .map((type) =>
-          nodesRef.current
-            .filter((node) => node.type === type)
-            .filter(
-              (node, index, self) =>
-                self.findIndex(({ id }) => node.id === id) === index
-            )
-        )
-        .filter((layer) => layer.length)
+      ...["Paragraph", "Sentence", "ExtEntity"].map((type) =>
+        nodesRef.current
+          .filter((node) => node.type === type)
+          .filter(
+            (node, index, self) =>
+              self.findIndex(({ id }) => node.id === id) === index
+          )
+      )
     );
     setNodeElements?.([]);
-    setLayers(newLayers);
+    setLayers(newLayers.filter((layer) => layer.length));
   };
 
   useEffect(() => {
@@ -492,13 +576,15 @@ const Explore: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    sessionStorage.setItem(
-      "graph",
-      JSON.stringify({
-        nodes: nodesRef.current,
-        links: linksRef.current,
-      })
-    );
+    try {
+      sessionStorage.setItem(
+        "graph",
+        JSON.stringify({
+          nodes: nodesRef.current,
+          links: linksRef.current,
+        })
+      );
+    } catch (err) {}
   }, [linksRef.current, nodesRef.current]);
 
   return (
@@ -519,6 +605,7 @@ const Explore: NextPage = () => {
                 : "min-w-[32rem] after:w-px after:p-10"
             } cursor-grab w-full p-10 scroll-container`}
           >
+            <Legend />
             {error ? (
               <div className="flex items-center justify-center flex-1 h-full gap-2 text-xl text-slate-300">
                 <ExclamationCircleIcon className="w-6 text-red-300" />
