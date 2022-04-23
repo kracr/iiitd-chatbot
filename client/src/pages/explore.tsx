@@ -149,70 +149,72 @@ const GraphNodes: React.FC<{
 }) => (
   <div className="flex flex-col gap-20">
     {layers.map((layer, i) => (
-      <div
-        key={`layer-${i}`}
-        className="flex flex-wrap gap-10 p-5 mx-auto bg-slate-100"
-      >
-        {layer.map((node, j) => (
-          <article
-            key={`${node.id}-${i}-${j}`}
-            ref={(ref) =>
-              ref && setNodeElements?.((items) => [...items, { node, ref }])
-            }
-            className={`rounded-md border ${
-              nodeColor[node.type].border
-            } shadow-slate-100 relative flex flex-shrink-0 max-w-[10rem] min-w-[5rem] group ${
-              nodeColor[node.type].bg
-            } ${
-              [activeLink?.source.id, activeLink?.target.id].includes(node.id)
-                ? "opacity-100 scale-110"
-                : "opacity-80"
-            } hover:opacity-100 hover:scale-105 transform transition duration-100`}
-            onClick={() => onNodeClick(node)}
-          >
-            <header className="absolute w-full transition duration-300 opacity-25 sm:opacity-0 group-hover:opacity-100">
-              <button
-                className="absolute -left-2 -top-2"
-                onClick={(e) => {
-                  getNeighbours([node]);
-                  e.stopPropagation();
-                }}
-              >
-                <PlusCircleIcon
-                  className={`w-7 h-7 ${
-                    nodeColor[node.type].text
-                  } bg-white rounded-full`}
-                />
-              </button>
-              <button
-                className="absolute -right-2 -top-2"
-                onClick={(e) => {
-                  removeNode(node.id);
-                  e.stopPropagation();
-                }}
-              >
-                <XCircleIcon
-                  className={`w-7 h-7 ${
-                    nodeColor[node.type].text
-                  } bg-white rounded-full`}
-                />
-              </button>
-            </header>
-            <button className="p-4 overflow-auto text-sm text-left">
-              <div>
-                <div
-                  className={`font-bold break-words ${
-                    nodeColor[node.type].text
-                  }`}
+      <div className="flex flex-col gap-1 mx-auto">
+        <p className="text-xs font-medium tracking-wider uppercase text-slate-600">
+          Layer {i + 1}
+        </p>
+        <div className="flex flex-wrap gap-10 p-5 mx-auto bg-slate-100">
+          {layer.map((node, j) => (
+            <article
+              key={`${node.id}-${i}-${j}`}
+              ref={(ref) =>
+                ref && setNodeElements?.((items) => [...items, { node, ref }])
+              }
+              className={`rounded-md border ${
+                nodeColor[node.type].border
+              } shadow-slate-100 relative flex flex-shrink-0 max-w-[10rem] min-w-[5rem] group ${
+                nodeColor[node.type].bg
+              } ${
+                [activeLink?.source.id, activeLink?.target.id].includes(node.id)
+                  ? "opacity-100 scale-110"
+                  : "opacity-80"
+              } hover:opacity-100 hover:scale-105 transform transition duration-100`}
+              onClick={() => onNodeClick(node)}
+            >
+              <header className="absolute w-full transition duration-300 opacity-25 sm:opacity-0 group-hover:opacity-100">
+                <button
+                  className="absolute -left-2 -top-2"
+                  onClick={(e) => {
+                    getNeighbours([node]);
+                    e.stopPropagation();
+                  }}
                 >
-                  {node.text.length > 30
-                    ? node.text.slice(0, 30) + "..."
-                    : node.text}
+                  <PlusCircleIcon
+                    className={`w-7 h-7 ${
+                      nodeColor[node.type].text
+                    } bg-white rounded-full`}
+                  />
+                </button>
+                <button
+                  className="absolute -right-2 -top-2"
+                  onClick={(e) => {
+                    removeNode(node.id);
+                    e.stopPropagation();
+                  }}
+                >
+                  <XCircleIcon
+                    className={`w-7 h-7 ${
+                      nodeColor[node.type].text
+                    } bg-white rounded-full`}
+                  />
+                </button>
+              </header>
+              <button className="p-4 overflow-auto text-sm text-left">
+                <div>
+                  <div
+                    className={`font-bold break-words ${
+                      nodeColor[node.type].text
+                    }`}
+                  >
+                    {node.text.length > 30
+                      ? node.text.slice(0, 30) + "..."
+                      : node.text}
+                  </div>
                 </div>
-              </div>
-            </button>
-          </article>
-        ))}
+              </button>
+            </article>
+          ))}
+        </div>
       </div>
     ))}
   </div>
@@ -602,7 +604,7 @@ const Explore: NextPage = () => {
             className={`relative ${
               error || layers.flat().length === 0
                 ? "flex items-center justify-center"
-                : "min-w-[32rem] after:w-px after:p-10"
+                : "min-w-[48rem] after:w-px after:p-10"
             } w-full p-10 scroll-container`}
           >
             <Legend />
