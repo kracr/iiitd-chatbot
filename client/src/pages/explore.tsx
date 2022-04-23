@@ -597,7 +597,7 @@ const Explore: NextPage = () => {
       )}
       <main className="flex flex-col flex-1">
         <Header loading={loading} onSubmit={({ query }) => getGraph(query)} />
-        <section className="w-full overflow-x-auto">
+        <section className="flex-1 w-full overflow-x-auto">
           <div
             className={`relative ${
               error || layers.flat().length === 0

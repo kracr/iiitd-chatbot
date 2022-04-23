@@ -108,7 +108,7 @@ const Chat: React.FC<{
   return (
     <section
       id="chat"
-      className="flex flex-col md:col-span-2 overflow-hidden shadow-lg rounded-xl [max-height:80vh]"
+      className="flex flex-col flex-1 md:col-span-2 overflow-hidden shadow-lg rounded-xl [max-height:80vh]"
     >
       <header className="flex items-center gap-2 p-4 bg-teal-500">
         <div className="flex items-center justify-center w-10 h-10 bg-white rounded-full">
