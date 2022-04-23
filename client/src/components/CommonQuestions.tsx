@@ -1,5 +1,5 @@
-import { ArrowCircleRightIcon } from "@heroicons/react/solid";
-import React from "react";
+import { ArrowCircleRightIcon, ChevronLeftIcon } from "@heroicons/react/solid";
+import React, { useState } from "react";
 import questions from "../../data/common-questions.json";
 
 const CommonQuestionItem: React.FC<{
@@ -20,15 +20,27 @@ const CommonQuestionItem: React.FC<{
 const CommonQuestions: React.FC<{
   sendQuery: ((values: { query: string }) => Promise<void>) | undefined;
 }> = ({ sendQuery }) => {
+  const [open, setOpen] = useState<boolean>(false);
   return (
     <section id="common-questions" className="space-y-6">
-      <div className="space-y-1">
-        <h2 className="text-lg font-medium text-teal-600">Common Questions</h2>
-        <p className="leading-normal text-slate-600">
-          A list of frequently asked questions to get you started!
-        </p>
+      <div className="flex items-center justify-between gap-2 md:block">
+        <div className="space-y-1">
+          <h2 className="text-lg font-medium text-teal-600">
+            Common Questions
+          </h2>
+          <p className="leading-normal text-slate-600">
+            A list of frequently asked questions to get you started!
+          </p>
+        </div>
+        <button className="block md:hidden" onClick={() => setOpen(!open)}>
+          <ChevronLeftIcon
+            className={`w-12 h-12 text-teal-600 opacity-70 transition duration-150 ease-in-out transform ${
+              open && "-rotate-90"
+            }`}
+          />
+        </button>
       </div>
-      <div className="flex flex-col items-stretch gap-2">
+      <div className="flex-col items-stretch hidden gap-2 md:flex">
         {questions.map((question, index) => (
           <CommonQuestionItem
             key={index}
@@ -37,6 +49,17 @@ const CommonQuestions: React.FC<{
           />
         ))}
       </div>
+      {open && (
+        <div className="flex flex-col items-stretch gap-2 md:hidden">
+          {questions.map((question, index) => (
+            <CommonQuestionItem
+              key={index}
+              question={question}
+              onClick={() => sendQuery?.({ query: question })}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };

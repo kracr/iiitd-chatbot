@@ -24,6 +24,9 @@ module.exports = {
     },
     extend: {
       colors,
+      screens: {
+        xs: "420px",
+      },
     },
   },
   plugins: [],

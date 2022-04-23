@@ -11,7 +11,7 @@ const Nav: React.FC = () => {
   const { pathname } = useRouter();
   return (
     <header className="py-6 border-b border-teal-100 bg-teal-50">
-      <nav className="flex items-center justify-between max-w-6xl mx-auto">
+      <nav className="flex flex-col items-center justify-between w-11/12 gap-4 mx-auto max-w-7xl xs:flex-row">
         <h1 className="text-2xl font-black">
           <Link href="/">
             <a className="flex items-center gap-2">
@@ -25,12 +25,12 @@ const Nav: React.FC = () => {
             </a>
           </Link>
         </h1>
-        <ul className="flex items-center">
+        <ul className="flex items-center text-xs sm:text-base">
           {links.map(({ href, label, icon: Icon }, index) => (
             <li key={href}>
               <Link href={href}>
                 <a
-                  className={`py-2 px-4 border-2 border-teal-500 uppercase tracking-wider font-bold flex items-center gap-2
+                  className={`py-2 px-2 sm:px-4 border-2 border-teal-500 uppercase tracking-wider font-bold flex items-center gap-1 sm:gap-2
                   transition duration-150 ease-in-out
                   ${
                     pathname === href

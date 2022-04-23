@@ -7,7 +7,7 @@ const Home: NextPage = () => {
   const [sendQuery, setSendQuery] =
     useState<(values: { query: string }) => Promise<void>>();
   return (
-    <main className="grid flex-1 max-w-6xl grid-cols-3 gap-10 py-10 mx-auto">
+    <main className="flex flex-col-reverse flex-1 w-11/12 grid-cols-3 gap-10 py-10 mx-auto md:grid max-w-7xl">
       <CommonQuestions sendQuery={sendQuery} />
       <Chat setSendQuery={setSendQuery} />
     </main>
