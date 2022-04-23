@@ -603,7 +603,7 @@ const Explore: NextPage = () => {
               error || layers.flat().length === 0
                 ? "flex items-center justify-center"
                 : "min-w-[32rem] after:w-px after:p-10"
-            } cursor-grab w-full p-10 scroll-container`}
+            } w-full p-10 scroll-container`}
           >
             <Legend />
             {error ? (
