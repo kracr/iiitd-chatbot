@@ -62,7 +62,7 @@ class bm25:
 		tokens = self.tokenize(query)
 		# average_idf = sum(map(lambda k: float(self.bm25.idf[k]), self.bm25.idf.keys())) / len(self.bm25.idf.keys())
 		scores = self.bm25.get_scores(tokens)
-		return np.array([s for i,s in enumerate(scores)]).reshape((1,295))
+		return np.array([s for i,s in enumerate(scores)]).reshape((1,-1))
 
 class tfidf:
 
