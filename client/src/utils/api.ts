@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://192.168.31.112:8080";
 const PROXY_URL = "http://localhost:3000/api";
 
 export interface Sentence {

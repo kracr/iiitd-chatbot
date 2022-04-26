@@ -18,8 +18,6 @@ export interface Node {
   id: string;
   text: string;
   type: NodeType;
-  hasNeighbors: boolean;
-  legend: boolean;
 }
 
 export interface Link {
@@ -84,42 +82,45 @@ const Header: React.FC<{
   loading: boolean;
   onSubmit: (values: { query: string }) => Promise<void>;
 }> = ({ loading, onSubmit }) => (
-  <header className="sticky top-0 z-20 flex flex-col items-center bg-teal-500 shadow shadow-slate-100 md:flex-row">
-    <h1 className="px-4 py-2 font-bold text-white text-medium">
-      Explore the Knowledge Graph
-    </h1>
-    <Formik
-      initialValues={{ query: "" }}
-      onSubmit={(values, { resetForm }) => {
-        resetForm();
-        onSubmit(values);
-      }}
-    >
-      {({ values, handleChange, handleSubmit }) => (
-        <form
-          className="flex items-center flex-1 w-full bg-slate-50"
-          onSubmit={handleSubmit}
-        >
-          <input
-            name="query"
-            type="text"
-            value={values.query}
-            onChange={handleChange}
-            className="flex-1 w-full p-4 text-lg bg-transparent border-t text-slate-600 border-slate-100 focus:outline-none"
-            placeholder="Enter a phrase..."
-          />
-          <button
-            type="submit"
-            className={`flex items-center gap-2 px-4 py-2 m-2 text-sm font-bold text-teal-700 uppercase transition duration-150 ease-in-out
+  <header className="sticky top-0 z-20 flex flex-col items-end gap-2">
+    <div className="flex flex-col items-center w-full bg-teal-500 shadow shadow-slate-100 md:flex-row">
+      <h1 className="px-4 py-2 font-bold text-white text-medium">
+        Explore the Knowledge Graph
+      </h1>
+      <Formik
+        initialValues={{ query: "" }}
+        onSubmit={(values, { resetForm }) => {
+          resetForm();
+          onSubmit(values);
+        }}
+      >
+        {({ values, handleChange, handleSubmit }) => (
+          <form
+            className="flex items-center flex-1 w-full bg-slate-50"
+            onSubmit={handleSubmit}
+          >
+            <input
+              name="query"
+              type="text"
+              value={values.query}
+              onChange={handleChange}
+              className="flex-1 w-full p-4 text-lg bg-transparent border-t text-slate-600 border-slate-100 focus:outline-none"
+              placeholder="Enter a phrase..."
+            />
+            <button
+              type="submit"
+              className={`flex items-center gap-2 px-4 py-2 m-2 text-sm font-bold text-teal-700 uppercase transition duration-150 ease-in-out
               transform bg-teal-100 rounded-xl hover:bg-teal-200 focus:outline-none focus:bg-teal-200 active:scale-95
               ${loading && "cursor-not-allowed"}`}
-          >
-            <SearchIcon className="w-6 h-6" />
-            <span>Search</span>
-          </button>
-        </form>
-      )}
-    </Formik>
+            >
+              <SearchIcon className="w-6 h-6" />
+              <span>Search</span>
+            </button>
+          </form>
+        )}
+      </Formik>
+    </div>
+    <Legend />
   </header>
 );
 
@@ -367,7 +368,7 @@ const Legend: React.FC = () => {
   ];
   const [open, setOpen] = useState<boolean>(false);
   return (
-    <aside className="absolute z-10 flex flex-col items-end gap-2 top-2 right-2">
+    <aside className="absolute z-10 flex flex-col items-end gap-2 top-28 md:top-[4.5rem] right-2 w-11/12">
       <button
         className="flex items-center gap-1 p-2 bg-opacity-50 border border-slate-400 backdrop-filter backdrop-blur bg-slate-100"
         onClick={() => setOpen(!open)}
@@ -440,8 +441,6 @@ const Explore: NextPage = () => {
         id: entity[0].toString(),
         text: entity[1],
         type: entity[2] as NodeType,
-        hasNeighbors: false,
-        legend: false,
       }));
       await getNeighbours();
       setError(false);
@@ -465,8 +464,6 @@ const Explore: NextPage = () => {
       id: node[0].toString(),
       text: node[1],
       type: node[2] as NodeType,
-      hasNeighbors: presentNeighboursRef.current.has(node[0].toString()),
-      legend: false,
     }));
     linksRef.current = data.edges.map((edge) => ({
       source: nodesRef.current.find(({ id }) => id === edge[0].toString())!,
@@ -490,14 +487,7 @@ const Explore: NextPage = () => {
     const linkNodeIds = new Set(
       linksRef.current.flatMap(({ source, target }) => [source.id, target.id])
     );
-    nodesRef.current = [
-      ...nodesRef.current
-        .filter(({ id }) => linkNodeIds.has(id))
-        .map((node) => ({
-          ...node,
-          hasNeighbors: presentNeighboursRef.current.has(node.id),
-        })),
-    ];
+    nodesRef.current = nodesRef.current.filter(({ id }) => linkNodeIds.has(id));
     calculateNodePositions();
   };
 
@@ -554,9 +544,7 @@ const Explore: NextPage = () => {
       if (event.key === "Escape" && selectedNode) setSelectedNode(undefined);
     };
     window.addEventListener("keydown", escapeCallback);
-    return () => {
-      window.removeEventListener("keydown", escapeCallback);
-    };
+    return () => window.removeEventListener("keydown", escapeCallback);
   }, [selectedNode]);
 
   useEffect(() => {
@@ -572,9 +560,7 @@ const Explore: NextPage = () => {
       }
     }
     window.addEventListener("resize", calculateNodePositions);
-    return () => {
-      window.removeEventListener("resize", calculateNodePositions);
-    };
+    return () => window.removeEventListener("resize", calculateNodePositions);
   }, []);
 
   useEffect(() => {
@@ -607,7 +593,6 @@ const Explore: NextPage = () => {
                 : "min-w-[48rem] after:w-px after:p-10"
             } w-full p-10 scroll-container`}
           >
-            <Legend />
             {error ? (
               <div className="flex items-center justify-center flex-1 h-full gap-2 text-xl text-slate-300">
                 <ExclamationCircleIcon className="w-6 text-red-300" />
