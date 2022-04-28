@@ -85,15 +85,9 @@ const Header: React.FC<{
   <header className="sticky top-0 z-20 flex flex-col items-end gap-2">
     <div className="flex flex-col items-center w-full bg-teal-500 shadow shadow-slate-100 md:flex-row">
       <h1 className="px-4 py-2 font-bold text-white text-medium">
-        Explore the Knowledge Graph
+        Explore the Document Graph
       </h1>
-      <Formik
-        initialValues={{ query: "" }}
-        onSubmit={(values, { resetForm }) => {
-          resetForm();
-          onSubmit(values);
-        }}
-      >
+      <Formik initialValues={{ query: "" }} onSubmit={onSubmit}>
         {({ values, handleChange, handleSubmit }) => (
           <form
             className="flex items-center flex-1 w-full bg-slate-50"
@@ -105,7 +99,7 @@ const Header: React.FC<{
               value={values.query}
               onChange={handleChange}
               className="flex-1 w-full p-4 text-lg bg-transparent border-t text-slate-600 border-slate-100 focus:outline-none"
-              placeholder="Enter a phrase..."
+              placeholder="Enter a phrase... (e.g. 'admission')"
             />
             <button
               type="submit"
@@ -143,72 +137,67 @@ const GraphNodes: React.FC<{
 }) => (
   <div className="flex flex-col gap-20">
     {layers.map((layer, i) => (
-      <div className="flex flex-col gap-1 mx-auto">
-        <p className="text-xs font-medium tracking-wider uppercase text-slate-600">
-          Layer {i + 1}
-        </p>
-        <div className="flex flex-wrap gap-10 p-5 mx-auto bg-slate-100">
-          {layer.map((node, j) => (
-            <article
-              key={`${node.id}-${i}-${j}`}
-              ref={(ref) =>
-                ref && setNodeElements?.((map) => map.set(node.id, ref))
-              }
-              className={`rounded-md border ${
-                nodeColor[node.type].border
-              } shadow-slate-100 relative flex flex-shrink-0 max-w-[10rem] min-w-[5rem] group ${
-                nodeColor[node.type].bg
-              } ${
-                [activeLink?.source.id, activeLink?.target.id].includes(node.id)
-                  ? "opacity-100 scale-110"
-                  : "opacity-80"
-              } hover:opacity-100 hover:scale-105 transform transition duration-100`}
-              onClick={() => onNodeClick(node)}
-            >
-              <header className="absolute w-full transition duration-300 opacity-25 sm:opacity-0 group-hover:opacity-100">
-                <button
-                  className="absolute -left-2 -top-2"
-                  onClick={(e) => {
-                    getNeighbours([node]);
-                    e.stopPropagation();
-                  }}
-                >
-                  <PlusCircleIcon
-                    className={`w-7 h-7 ${
-                      nodeColor[node.type].text
-                    } bg-white rounded-full`}
-                  />
-                </button>
-                <button
-                  className="absolute -right-2 -top-2"
-                  onClick={(e) => {
-                    removeNode(node.id);
-                    e.stopPropagation();
-                  }}
-                >
-                  <XCircleIcon
-                    className={`w-7 h-7 ${
-                      nodeColor[node.type].text
-                    } bg-white rounded-full`}
-                  />
-                </button>
-              </header>
-              <button className="p-4 overflow-auto text-sm text-left">
-                <div>
-                  <div
-                    className={`font-bold break-words ${
-                      nodeColor[node.type].text
-                    }`}
-                  >
-                    {node.text.length > 30
-                      ? node.text.slice(0, 30) + "..."
-                      : node.text}
-                  </div>
-                </div>
+      <div className="flex flex-wrap gap-10 p-5 mx-auto bg-slate-100">
+        {layer.map((node, j) => (
+          <article
+            key={`${node.id}-${i}-${j}`}
+            ref={(ref) =>
+              ref && setNodeElements?.((map) => map.set(node.id, ref))
+            }
+            className={`rounded-md border ${
+              nodeColor[node.type].border
+            } shadow-slate-100 relative flex flex-shrink-0 max-w-[10rem] min-w-[5rem] group ${
+              nodeColor[node.type].bg
+            } ${
+              [activeLink?.source.id, activeLink?.target.id].includes(node.id)
+                ? "opacity-100 scale-110"
+                : "opacity-80"
+            } hover:opacity-100 hover:scale-105 transform transition duration-100`}
+            onClick={() => onNodeClick(node)}
+          >
+            <header className="absolute w-full transition duration-300 opacity-25 sm:opacity-0 group-hover:opacity-100">
+              <button
+                className="absolute -left-2 -top-2"
+                onClick={(e) => {
+                  getNeighbours([node]);
+                  e.stopPropagation();
+                }}
+              >
+                <PlusCircleIcon
+                  className={`w-7 h-7 ${
+                    nodeColor[node.type].text
+                  } bg-white rounded-full`}
+                />
               </button>
-            </article>
-          ))}
-        </div>
+              <button
+                className="absolute -right-2 -top-2"
+                onClick={(e) => {
+                  removeNode(node.id);
+                  e.stopPropagation();
+                }}
+              >
+                <XCircleIcon
+                  className={`w-7 h-7 ${
+                    nodeColor[node.type].text
+                  } bg-white rounded-full`}
+                />
+              </button>
+            </header>
+            <button className="p-4 overflow-auto text-sm text-left">
+              <div>
+                <div
+                  className={`font-bold break-words ${
+                    nodeColor[node.type].text
+                  }`}
+                >
+                  {node.text.length > 30
+                    ? node.text.slice(0, 30) + "..."
+                    : node.text}
+                </div>
+              </div>
+            </button>
+          </article>
+        ))}
       </div>
     ))}
   </div>
