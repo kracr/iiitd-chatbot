@@ -129,14 +129,7 @@ const GraphNodes: React.FC<{
   activeLink?: Link;
   onNodeClick: (node: Node) => void;
   setNodeElements:
-    | React.Dispatch<
-        React.SetStateAction<
-          {
-            node: Node;
-            ref: HTMLElement;
-          }[]
-        >
-      >
+    | React.Dispatch<React.SetStateAction<Map<string, HTMLElement>>>
     | undefined;
   removeNode: (nodeId: string) => void;
   getNeighbours: (nodeNeighbours?: Node[]) => Promise<void>;
@@ -159,7 +152,7 @@ const GraphNodes: React.FC<{
             <article
               key={`${node.id}-${i}-${j}`}
               ref={(ref) =>
-                ref && setNodeElements?.((items) => [...items, { node, ref }])
+                ref && setNodeElements?.((map) => map.set(node.id, ref))
               }
               className={`rounded-md border ${
                 nodeColor[node.type].border
@@ -227,51 +220,35 @@ const GraphLinks: React.FC<{
   setActiveLink: React.Dispatch<React.SetStateAction<Link | undefined>>;
   setSetNodeElements: React.Dispatch<
     React.SetStateAction<
-      | React.Dispatch<
-          React.SetStateAction<
-            {
-              node: Node;
-              ref: HTMLElement;
-            }[]
-          >
-        >
-      | undefined
+      React.Dispatch<React.SetStateAction<Map<string, HTMLElement>>> | undefined
     >
   >;
 }> = ({ links, containerRef, setSetNodeElements, setActiveLink }) => {
-  const [nodeElements, setNodeElements] = useState<
-    {
-      node: Node;
-      ref: HTMLElement;
-    }[]
-  >([]);
+  const [nodeElements, setNodeElements] = useState<Map<string, HTMLElement>>(
+    new Map()
+  );
 
   useEffect(() => {
     setSetNodeElements?.(() => setNodeElements);
   }, [setSetNodeElements, setNodeElements]);
 
+  if (!containerRef) return null;
+  const containerRect = containerRef.getBoundingClientRect();
+
   return (
     <svg className="absolute top-0 left-0 overflow-visible">
       {links.map((link) => {
-        const sourceNodeElement = nodeElements.find(
-          ({ node }) => node.id === link.source.id
-        )?.ref;
-        const targetNodeElement = nodeElements.find(
-          ({ node }) => node.id === link.target.id
-        )?.ref;
-        if (!sourceNodeElement || !targetNodeElement || !containerRef)
-          return null;
-        const sourceRect = sourceNodeElement.getBoundingClientRect();
-        const targetRect = targetNodeElement.getBoundingClientRect();
-        const containerRect = containerRef.getBoundingClientRect();
-        const sourceCenter = {
-          x: sourceRect.left + sourceRect.width / 2 - containerRect.left,
-          y: sourceRect.top + sourceRect.height / 2 - containerRect.top,
-        };
-        const targetCenter = {
-          x: targetRect.left + targetRect.width / 2 - containerRect.left,
-          y: targetRect.top + targetRect.height / 2 - containerRect.top,
-        };
+        const sourceNode = nodeElements.get(link.source.id);
+        const targetNode = nodeElements.get(link.target.id);
+        if (!sourceNode || !targetNode) return null;
+        const sourceRect = sourceNode.getBoundingClientRect();
+        const targetRect = targetNode.getBoundingClientRect();
+        const [sourceCenter, targetCenter] = [sourceRect, targetRect].map(
+          (rect) => ({
+            x: rect.left + rect.width / 2 - containerRect.left,
+            y: rect.top + rect.height / 2 - containerRect.top,
+          })
+        );
         return (
           <line
             key={`${link.source.id}-${link.target.id}`}
@@ -422,16 +399,8 @@ const Explore: NextPage = () => {
   const [activeLink, setActiveLink] = useState<Link>();
   const [selectedNode, setSelectedNode] = useState<Node>();
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
-  const [setNodeElements, setSetNodeElements] = useState<
-    React.Dispatch<
-      React.SetStateAction<
-        {
-          node: Node;
-          ref: HTMLElement;
-        }[]
-      >
-    >
-  >();
+  const [setNodeElements, setSetNodeElements] =
+    useState<React.Dispatch<React.SetStateAction<Map<string, HTMLElement>>>>();
 
   const getGraph = async (query: string) => {
     setLoading(true);
@@ -527,15 +496,14 @@ const Explore: NextPage = () => {
     });
     newLayers.push(
       ...["Paragraph", "Sentence", "ExtEntity"].map((type) =>
-        nodesRef.current
-          .filter((node) => node.type === type)
-          .filter(
-            (node, index, self) =>
-              self.findIndex(({ id }) => node.id === id) === index
-          )
+        nodesRef.current.filter(
+          (node, index, self) =>
+            node.type === type &&
+            self.findIndex(({ id }) => node.id === id) === index
+        )
       )
     );
-    setNodeElements?.([]);
+    setNodeElements?.(new Map());
     setLayers(newLayers.filter((layer) => layer.length));
   };
 
@@ -613,11 +581,11 @@ const Explore: NextPage = () => {
                 />
                 <GraphNodes
                   layers={layers}
-                  setNodeElements={setNodeElements}
+                  activeLink={activeLink}
                   removeNode={removeNode}
                   getNeighbours={getNeighbours}
-                  activeLink={activeLink}
-                  onNodeClick={(node: Node) => setSelectedNode(node)}
+                  setNodeElements={setNodeElements}
+                  onNodeClick={setSelectedNode}
                 />
               </div>
             )}
