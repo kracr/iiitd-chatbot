@@ -11,8 +11,8 @@ load_dotenv()
 # NEO4J_USERNAME = os.getenv('NEO4J_USERNAME')
 # NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD')
 
-NEO4J_USERNAME = "pankil"
-NEO4J_PASSWORD = "suzy"
+NEO4J_USERNAME = "himanshu"
+NEO4J_PASSWORD = "himanshu"
 
 qa_model.init()
 qa_helper.init_kg(NEO4J_USERNAME, NEO4J_PASSWORD)
@@ -34,7 +34,6 @@ class MyServer(BaseHTTPRequestHandler):
 
 	def do_POST(self):
 		data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
-
 		if self.path == '/get_answer':
 			sentences = qa_model.find_answer(data['query'])
 			self.send_response(200)
